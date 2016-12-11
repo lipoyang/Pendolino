@@ -77,8 +77,13 @@
             this.textTheta0 = new System.Windows.Forms.TextBox();
             this.trackTheta0 = new System.Windows.Forms.TrackBar();
             this.buttonLoad = new System.Windows.Forms.Button();
-            this.koshiClientUI = new KoshiBridge.KoshiClientUI();
             this.buttonCalib = new System.Windows.Forms.Button();
+            this.buttonF = new System.Windows.Forms.Button();
+            this.buttonB = new System.Windows.Forms.Button();
+            this.buttonR = new System.Windows.Forms.Button();
+            this.buttonL = new System.Windows.Forms.Button();
+            this.koshiClientUI = new KoshiBridge.KoshiClientUI();
+            this.buttonStop = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.trackK1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackK2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackK3)).BeginInit();
@@ -504,15 +509,6 @@
             this.buttonLoad.UseVisualStyleBackColor = true;
             this.buttonLoad.Click += new System.EventHandler(this.buttonLoad_Click);
             // 
-            // koshiClientUI
-            // 
-            this.koshiClientUI.IpAddress = "127.0.0.1";
-            this.koshiClientUI.Location = new System.Drawing.Point(12, 399);
-            this.koshiClientUI.Name = "koshiClientUI";
-            this.koshiClientUI.PortNumber = 5678;
-            this.koshiClientUI.Size = new System.Drawing.Size(221, 132);
-            this.koshiClientUI.TabIndex = 0;
-            // 
             // buttonCalib
             // 
             this.buttonCalib.Font = new System.Drawing.Font("MS UI Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
@@ -524,11 +520,80 @@
             this.buttonCalib.UseVisualStyleBackColor = true;
             this.buttonCalib.Click += new System.EventHandler(this.buttonCalib_Click);
             // 
+            // buttonF
+            // 
+            this.buttonF.Font = new System.Drawing.Font("MS UI Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.buttonF.Location = new System.Drawing.Point(293, 385);
+            this.buttonF.Name = "buttonF";
+            this.buttonF.Size = new System.Drawing.Size(35, 35);
+            this.buttonF.TabIndex = 42;
+            this.buttonF.Text = "↑";
+            this.buttonF.UseVisualStyleBackColor = true;
+            this.buttonF.Click += new System.EventHandler(this.buttonF_Click);
+            // 
+            // buttonB
+            // 
+            this.buttonB.Font = new System.Drawing.Font("MS UI Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.buttonB.Location = new System.Drawing.Point(293, 455);
+            this.buttonB.Name = "buttonB";
+            this.buttonB.Size = new System.Drawing.Size(35, 35);
+            this.buttonB.TabIndex = 43;
+            this.buttonB.Text = "↓";
+            this.buttonB.UseVisualStyleBackColor = true;
+            this.buttonB.Click += new System.EventHandler(this.buttonB_Click);
+            // 
+            // buttonR
+            // 
+            this.buttonR.Font = new System.Drawing.Font("MS UI Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.buttonR.Location = new System.Drawing.Point(329, 420);
+            this.buttonR.Name = "buttonR";
+            this.buttonR.Size = new System.Drawing.Size(35, 35);
+            this.buttonR.TabIndex = 44;
+            this.buttonR.Text = "→";
+            this.buttonR.UseVisualStyleBackColor = true;
+            this.buttonR.Click += new System.EventHandler(this.buttonR_Click);
+            // 
+            // buttonL
+            // 
+            this.buttonL.Font = new System.Drawing.Font("MS UI Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.buttonL.Location = new System.Drawing.Point(258, 420);
+            this.buttonL.Name = "buttonL";
+            this.buttonL.Size = new System.Drawing.Size(35, 35);
+            this.buttonL.TabIndex = 45;
+            this.buttonL.Text = "←";
+            this.buttonL.UseVisualStyleBackColor = true;
+            this.buttonL.Click += new System.EventHandler(this.buttonL_Click);
+            // 
+            // koshiClientUI
+            // 
+            this.koshiClientUI.IpAddress = "127.0.0.1";
+            this.koshiClientUI.Location = new System.Drawing.Point(12, 399);
+            this.koshiClientUI.Name = "koshiClientUI";
+            this.koshiClientUI.PortNumber = 5678;
+            this.koshiClientUI.Size = new System.Drawing.Size(221, 132);
+            this.koshiClientUI.TabIndex = 0;
+            // 
+            // buttonStop
+            // 
+            this.buttonStop.Font = new System.Drawing.Font("MS UI Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.buttonStop.Location = new System.Drawing.Point(293, 420);
+            this.buttonStop.Name = "buttonStop";
+            this.buttonStop.Size = new System.Drawing.Size(35, 35);
+            this.buttonStop.TabIndex = 46;
+            this.buttonStop.Text = "止";
+            this.buttonStop.UseVisualStyleBackColor = true;
+            this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(984, 562);
+            this.Controls.Add(this.buttonStop);
+            this.Controls.Add(this.buttonL);
+            this.Controls.Add(this.buttonR);
+            this.Controls.Add(this.buttonB);
+            this.Controls.Add(this.buttonF);
             this.Controls.Add(this.buttonCalib);
             this.Controls.Add(this.buttonLoad);
             this.Controls.Add(this.label14);
@@ -634,6 +699,11 @@
         private System.Windows.Forms.TrackBar trackTheta0;
         private System.Windows.Forms.Button buttonLoad;
         private System.Windows.Forms.Button buttonCalib;
+        private System.Windows.Forms.Button buttonF;
+        private System.Windows.Forms.Button buttonB;
+        private System.Windows.Forms.Button buttonR;
+        private System.Windows.Forms.Button buttonL;
+        private System.Windows.Forms.Button buttonStop;
 
     }
 }

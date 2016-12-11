@@ -4,6 +4,7 @@
 #include <EEPROM.h>
 #include <MPU6050.h>
 #include <math.h>
+#include "common.h"
 
 // ピン番号 (デジタル)
 #define MOTOR_L_IN1    2
@@ -32,10 +33,13 @@ float x;
 float v;
 float ka,kb,kc,kd;
 float theta0;
+float x0;
 int16_t gx0;
+float omega0;
+float omega0Acc;
 bool flgGyroCalib = false;
 int cntGyroCalib;
-uint32_t gxAcc;
+int32_t gxAcc;
 bool flgTick = false;
 bool flg1st = true;
 bool flg1stCtrl = true;
@@ -43,6 +47,9 @@ bool flg1stCtrl2 = true;
 bool isControlOn = true;
 int cntSafety = 0;
 char txbuff[256];
+//int fb;
+float fb;
+int lr;
 
 /*
  * モータの制御
@@ -124,12 +131,15 @@ void setup() {
     isControlOn = true;
     // configure Arduino LED for
 //    pinMode(LED_PIN, OUTPUT);
-  theta = 0;
-  v = 0;
-  x = 0;
-  flg1st = true;
-  flg1stCtrl = true;
-  flg1stCtrl2 = true;
+    theta = 0;
+    v = 0;
+    x = 0;
+    x0 = 0;
+    fb = 0;
+    lr = 0;
+    flg1st = true;
+    flg1stCtrl = true;
+    flg1stCtrl2 = true;
 
     if(EEPROM.read(0) == 0xA5){
       read_parameter();
@@ -145,6 +155,12 @@ void setup() {
     Serial.println("time,theta,omega,x,v,a,b,c,d");
 }
 
+// byte⇔float変換用
+union{
+    unsigned char b[4];
+    float f;
+} bfConv;
+
 // パラメータのEEPROM読み出し
 void read_parameter()
 {
@@ -154,8 +170,27 @@ void read_parameter()
     kd = (float)((signed short)((EEPROM.read(7)<<8) + EEPROM.read(8))) / 10.0;
     
     theta0 = (float)((signed short)((EEPROM.read(9)<<8) + EEPROM.read(10))) / 10.0;
-
-    gx0 = (signed short)((EEPROM.read(11)<<8) + EEPROM.read(12));
+    //theta0 = 92.0;
+    
+    //Serial.println(ka);
+    //Serial.println(kb);
+    //Serial.println(kc);
+    //Serial.println(kd);
+    //Serial.println(theta0);
+    
+    bfConv.b[0] = EEPROM.read(11);
+    bfConv.b[1] = EEPROM.read(12);
+    bfConv.b[2] = EEPROM.read(13);
+    bfConv.b[3] = EEPROM.read(14);
+    
+    if( isnan( bfConv.f) ){
+      omega0 = 0;
+    }else{
+      omega0 = bfConv.f;
+    }
+    //Serial.println(omega0);
+    //gx0 = (signed short)((EEPROM.read(11)<<8) + EEPROM.read(12));
+    //Serial.println(omega0);
 }
 
 // パラメータのEEPROM書き込み
@@ -194,10 +229,15 @@ void write_parameter()
     EEPROM.write(9, hb);
     EEPROM.write(10, lb);
     
-    hb = (unsigned char)(gx0 >> 8);
-    lb = (unsigned char)(gx0 & 0xFF);
-    EEPROM.write(11, hb);
-    EEPROM.write(12, lb);
+    //hb = (unsigned char)(gx0 >> 8);
+    //lb = (unsigned char)(gx0 & 0xFF);
+    //EEPROM.write(11, hb);
+    //EEPROM.write(12, lb);
+    bfConv.f = omega0;
+    EEPROM.write(11, bfConv.b[0]);
+    EEPROM.write(12, bfConv.b[1]);
+    EEPROM.write(13, bfConv.b[2]);
+    EEPROM.write(14, bfConv.b[3]);
 }
 
 // メインループ
@@ -217,16 +257,38 @@ void loop() {
     if(flgGyroCalib){
         if( (cntGyroCalib % 10 ) == 0 ){
             int cnt = cntGyroCalib / 10;
-            if(cnt < 50){
-                gxAcc += (int32_t)gx;
+            if(cnt < 200){
+                omega0 = (float)gx / 32768 * 250;
+                omega0Acc += omega0;
+                //Serial.print(omega0);
+                //Serial.print(" ");
+                //Serial.println(omega0Acc);
+
+                //gxAcc += (int32_t)gx;
+                //sprintf(txbuff, "gx = %d, gxAcc = %d\r\n", gx, gxAcc);
+                //Serial.print(txbuff);
                 
             }else{
-                gx0 = (int16_t)(gxAcc / 50);
                 flgGyroCalib = false;
-                unsigned char hb = (unsigned char)(gx0 >> 8);
-                unsigned char lb = (unsigned char)(gx0 & 0xFF);
-                EEPROM.write(11, hb);
-                EEPROM.write(12, lb);
+
+                omega0 = omega0Acc / 200;
+                //Serial.print(omega0);
+                //Serial.print(" ");
+                //Serial.println(omega0Acc);
+                
+                bfConv.f = omega0;
+                EEPROM.write(11, bfConv.b[0]);
+                EEPROM.write(12, bfConv.b[1]);
+                EEPROM.write(13, bfConv.b[2]);
+                EEPROM.write(14, bfConv.b[3]);
+                
+                //gx0 = (int16_t)(gxAcc / 50);
+                //unsigned char hb = (unsigned char)(gx0 >> 8);
+                //unsigned char lb = (unsigned char)(gx0 & 0xFF);
+                //EEPROM.write(11, hb);
+                //EEPROM.write(12, lb);
+                //sprintf(txbuff, "gx0 = %d, gxAcc = %d\r\n", gx0, gxAcc);
+                //Serial.print(txbuff);
             }
         }
         cntGyroCalib++;
@@ -237,7 +299,8 @@ void loop() {
     theta_acc = atan2(ay, az) * 180 / M_PI;
     
     // gyro
-    omega = (float)(gx-gx0) / 32768 * 250;
+    //omega = (float)(gx-gx0) / 32768 * 250;
+    omega = (float)gx / 32768 * 250 - omega0;
     // theta_gyro += omega * 0.01;
     
     // complementary filter
@@ -260,10 +323,10 @@ void loop() {
       flg1stCtrl = false;
       a = ka * (theta - theta0);
       b = kb * omega;
-      c = kc * (x / 100);
+      c = kc * ((x-x0) / 100);
       d = kd * (v / 100);
     }
-    d_motor_out = a+b+c+d;
+    d_motor_out = a+b+c+d;//+fb;
     
     // limitter
     if(d_motor_out >  128) d_motor_out =  128;
@@ -273,12 +336,13 @@ void loop() {
       if(cntSafety>=500){
         cntSafety = 0;
         x = 0;
+        x0 = 0;
         d_motor_out = 0;
       }
     }
     
     // v & x
-    v = d_motor_out;
+    v = d_motor_out;// + fb;
     x += v / 500; // およそcm単位
     if(flg1stCtrl2 && (abs(theta - theta0) < 0.1)){
         flg1stCtrl2 = false;
@@ -296,16 +360,18 @@ void loop() {
         // serial send
         sprintf(txbuff, "#d%04X%04X%04X%04X%04X%04X$", t, (signed short)(theta*100),0,0,0,0);
         Serial.print(txbuff);
+        //Serial.println(theta);
       }
     }else{
-      ctrl_motor(0, motor_out);
-      ctrl_motor(1, motor_out);
+      ctrl_motor(0, motor_out + lr);
+      ctrl_motor(1, motor_out - lr);
       cnt10ms++;
       if(cnt10ms >= 10){
         cnt10ms = 0;
         // serial send
         sprintf(txbuff, "#d%04X%04X%04X%04X%04X%04X$", t, (signed short)((theta - theta0)*100), (signed short)(omega*100), (signed short)(x*100), (signed short)(v*100), motor_out);
         Serial.print(txbuff);
+        //Serial.println(theta);
       }
 /*
       Serial.print(t); Serial.print(",\t");
@@ -336,6 +402,8 @@ void SerialCom_callback(char* buff)
 {
   int val;
   int ret;
+  unsigned short uval;
+  
   switch(buff[0])
   {
     // モード切替
@@ -437,7 +505,31 @@ void SerialCom_callback(char* buff)
       flgGyroCalib = true;
       cntGyroCalib = 0;
       gxAcc = 0;
+      omega0Acc = 0;
       break;
+    /* Dコマンド(前進/後退)
+       書式: #Dxx$
+       xx: 0のとき停止、正のとき前進、負のとき後退。
+     */
+    case 'D':
+        // 値の解釈
+        if( HexToUint16(&buff[1], &uval, 2) != 0 ) break;
+        val = (int)((signed char)uval);
+        fb = val / 8;
+        x0 += val / 8;
+        break;
+        
+    /* Tコマンド(旋回)
+       書式: #Txx$
+       xx: 0のとき中立、正のとき右旋回、負のとき左旋回
+     */
+    case 'T':
+        // 値の解釈
+        if( HexToUint16(&buff[1], &uval, 2) != 0 ) break;
+        val = (int)((signed char)uval);
+        lr = val / 8;
+        break;
+        
     default:
       //Serial.println("INVALID COMMAND!");
       ;

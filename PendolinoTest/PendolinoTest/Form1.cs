@@ -274,6 +274,31 @@ namespace PendolinoTest
             }
         }
 
+        private void buttonF_Click(object sender, EventArgs e)
+        {
+            koshiClient.uartWrite("#D40$");
+        }
+
+        private void buttonB_Click(object sender, EventArgs e)
+        {
+            koshiClient.uartWrite("#DC0$");
+        }
+
+        private void buttonR_Click(object sender, EventArgs e)
+        {
+            koshiClient.uartWrite("#T40$");
+        }
+
+        private void buttonL_Click(object sender, EventArgs e)
+        {
+            koshiClient.uartWrite("#TC0$");
+        }
+
+        private void buttonStop_Click(object sender, EventArgs e)
+        {
+            koshiClient.uartWrite("#T00$#D00$");
+        }
+
         // 設定保存
         private void buttonSave_Click(object sender, EventArgs e)
         {
