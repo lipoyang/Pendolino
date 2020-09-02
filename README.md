@@ -22,4 +22,5 @@ GPduinoを使った倒立振子です。
 ## ファイル一覧
 - Pendolino2/　　GPduino BLE用スケッチ
 - Pendolino3/　　GPduino WiFi用スケッチ
-- PendolinoTest/　Windows用モニタアプリ
+- PendolinoTest2/　Windows用モニタアプリ (GPduino BLE用)
+- PendolinoTest3/　Windows用モニタアプリ (GPduino WiFi用)
