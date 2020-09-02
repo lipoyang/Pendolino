@@ -1,4 +1,4 @@
-Pendolino2
+Pendolino
 =========
 
 ## 概要
@@ -20,5 +20,6 @@ GPduinoを使った倒立振子です。
 - スリムタイヤセットの大径ホイール
 
 ## ファイル一覧
-- Pendolino2/　　GPduino用スケッチ
+- Pendolino2/　　GPduino BLE用スケッチ
+- Pendolino3/　　GPduino WiFi用スケッチ
 - PendolinoTest/　Windows用モニタアプリ
